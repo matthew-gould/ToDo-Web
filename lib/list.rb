@@ -2,10 +2,17 @@ class List < ActiveRecord::Base
   has_many :items
   belongs_to :user
 
-  def add_item *item_name
-    i = Item.where(name: item_name).first_or_create!
-    items << i
+  
+  def add item_name, list_id
+    Item.create! item_name: item_name, list_id: list_id
   end
+
+
+  # def add_item item_name
+  #   # if list belongs to user, add items to that list.
+  #   i = Item.where(item_name: item_name).first_or_create!
+  #   items << i
+  # end
 
   
 end
