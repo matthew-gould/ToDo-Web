@@ -12,10 +12,8 @@ class Webtodo < Sinatra::Base
 
   
   def current_user
-    #username = params["user"]
-    # username = request.env["HTTP_AUTHORIZATION"]
-    u = User.last
-    return u
+    username = request.env["HTTP_AUTHORIZATION"]
+    User.find_or_create_by! name: username
   end
 
   get '/lists' do
@@ -30,7 +28,7 @@ class Webtodo < Sinatra::Base
 
   post '/lists/:list_name' do
     g = current_user.lists.find_or_create_by! name: params[:list_name]
-    a = g.add params["item_name"], g.id
+    a = g.add params["item_name"], g.id, current_user.id
     a.to_json
   end
 
@@ -48,16 +46,27 @@ class Webtodo < Sinatra::Base
     g.to_json
   end
 
-  
+  get '/next' do
+    a = current_user.items.where("due_date is not null").order("RANDOM()").first
+    a.to_json
+  end
+
+  get '/search' do
+  end
+
+
+
 
   
 end  
 
 Webtodo.run!
 
-# HTTParty.post("http://localhost:4567/lists", body: {name: 'test', item_name: 'test1'})
-# HTTParty.get("http://localhost:4567/lists/newlist", body: {item_name: 'fuck1'})
-# HTTParty.post("http://localhost:4567/lists/newlist", body: {item_name: 'fuck1'})
-# HTTParty.patch("http://localhost:4567/items/19", body: {due_date: 'Feb. 25th'})
-# HTTParty.delete("http://localhost:4567/items/19", body: {completed: 'true'})
+# HTTParty.post("http://localhost:4567/lists", body: {name: 'test', item_name: 'test1'}, headers: {"Authorization" => "matt"})
+# HTTParty.get("http://localhost:4567/lists/newlist", body: {item_name: 'fuck1'}, headers: {"Authorization" => "matt"})
+# HTTParty.post("http://localhost:4567/lists/Groceries", body: {item_name: 'cereal'}, headers: {"Authorization" => "matt"})
+# HTTParty.patch("http://localhost:4567/items/19", body: {due_date: 'Feb. 25th'}, headers: {"Authorization" => "matt"})
+# HTTParty.delete("http://localhost:4567/items/18", body: {completed: 'true'}, headers: {"Authorization" => "matt"})
+# HTTParty.get("http://localhost:4567/lists/next", headers: {"Authorization" => "matt"})
+
 

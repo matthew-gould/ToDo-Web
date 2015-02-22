@@ -3,8 +3,8 @@ class List < ActiveRecord::Base
   belongs_to :user
 
   
-  def add item_name, list_id
-    Item.create! item_name: item_name, list_id: list_id
+  def add item_name, list_id, user_id
+    Item.create! item_name: item_name, list_id: list_id, user_id: user_id
   end
 
 
