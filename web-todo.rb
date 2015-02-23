@@ -12,20 +12,28 @@ class Webtodo < Sinatra::Base
 
   
   def current_user
-    username = request.env["HTTP_AUTHORIZATION"]
-    User.find_or_create_by! name: username
-    # u = User.first
-    # return u
+    # username = request.env["HTTP_AUTHORIZATION"]
+    # User.find_or_create_by! name: username
+    u = User.first
+    return u
   end
 
   get '/lists' do
     current_user.lists.order(name: :asc).to_json
   end
 
+  get '/items' do
+    @user_items = current_user.items
+    erb :todo
+  end
+
   get '/lists/:name' do
     list = current_user.lists.find_by name: params[:name].downcase.capitalize
-    list.items.find_by(completed: false).to_json
-    list.to_json
+    @user_items = list.items.where(completed: false)
+    @list_name = params[:name]
+    @current_user = current_user.name.capitalize
+    # list.to_json
+    erb :todo
   end
 
   post '/lists/:list_name' do
@@ -34,13 +42,13 @@ class Webtodo < Sinatra::Base
     item.to_json
   end
 
-  patch '/items/:id' do # need to add some functionality so only items on user's lists can be modified.
+  post '/items/:id' do # need to add some functionality so only items on user's lists can be modified.
     item = current_user.items.find_by id: params[:id]
     item.due params["due_date"]
     item.to_json
   end
 
-  delete '/items/:id' do
+  post '/items/:id' do
     item = current_user.items.find_by id: params[:id]
     if params["completed"]
       item.complete!
@@ -71,7 +79,7 @@ Webtodo.run!
 
 # HTTParty.post("http://localhost:4567/lists", body: {name: 'test', item_name: 'test1'}, headers: {"Authorization" => "matt"})
 # HTTParty.get("http://localhost:4567/lists/chores", body: {item_name: 'laundry'}, headers: {"Authorization" => "matt"})
-# HTTParty.post("http://localhost:4567/lists/Groceries", body: {item_name: 'cereal'}, headers: {"Authorization" => "matt"})
+# HTTParty.post("http://localhost:4567/lists/groceries", body: {item_name: 'tea'}, headers: {"Authorization" => "matt"})
 # HTTParty.patch("http://localhost:4567/items/19", body: {due_date: 'Feb. 25th'}, headers: {"Authorization" => "matt"})
 # HTTParty.delete("http://localhost:4567/items/18", body: {completed: 'true'}, headers: {"Authorization" => "matt"})
 # HTTParty.get("http://localhost:4567/lists/next", headers: {"Authorization" => "matt"})
