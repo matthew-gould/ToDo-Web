@@ -19,7 +19,8 @@ class Webtodo < Sinatra::Base
   end
 
   get '/lists' do
-    current_user.lists.order(name: :asc).to_json
+    @user_lists = current_user.lists.order(name: :asc)
+    erb :todo_lists
   end
 
   get '/items' do
@@ -42,13 +43,13 @@ class Webtodo < Sinatra::Base
     item.to_json
   end
 
-  post '/items/:id' do # need to add some functionality so only items on user's lists can be modified.
+  post '/items/due/:id' do # need to add some functionality so only items on user's lists can be modified.
     item = current_user.items.find_by id: params[:id]
     item.due params["due_date"]
     item.to_json
   end
 
-  post '/items/:id' do
+  post '/items/completed/:id' do
     item = current_user.items.find_by id: params[:id]
     if params["completed"]
       item.complete!
