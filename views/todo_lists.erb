@@ -12,15 +12,15 @@
           <tr>
             <th>Name</th>
             <th>List ID</th>
-            <th>User ID</th>
+            <th>User</th>
           </tr>
         </thead>
         <tbody>
           <% @user_lists.each do |list| %>
             <tr>
-              <td><a href= "/lists/<%= list.name.downcase %>"><%= list["name"] %></a></td>
+              <td><a href= "/lists/<%= list.name %>"><%= list["name"] %></a></td>
               <td><%= list["id"] %></td>
-              <td><%= list["user_id"] %></td>
+              <td><%= list.user.name.capitalize %></td>
             </tr>
           <% end %>
         </tbody>
@@ -35,7 +35,6 @@
 
       <div class="well">
         <form action="/lists" method="GET">
-          <input name="name" class="form_control">
           <button class="btn btn-danger">Search Lists</button>
         </form>
       </div>

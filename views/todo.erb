@@ -11,23 +11,25 @@
         <thead>
           <tr>
             <th>Name</th>
+            <th>List</th>
             <th>Due On</th>
             <th>Completed?</th>
-            <th>User ID</th>
+            <th>User</th>
             <th>Click To Complete</th>
           </tr>
         </thead>
         <tbody>
           <% @user_items.each do |item| %>
             <tr>
-              <td><a href= "/lists/<%= item.list.name %>"><%= item["item_name"] %></a></td>
+              <td><a href= "/lists/<%= item.list.name %>"><%= item["item_name"].capitalize %></a></td>
+              <td><a href= "/lists/<%= item.list.name %>"><%= item.list.name %></a></td>
               <td><%= item["due_date"] %></td>
               <% if item.completed == true %>
                 <td class="success"><%= item["completed"] %></td>
                 <% else %>
                 <td class="danger"><%= item["completed"] %></td>
                 <% end %>
-              <td><%= item["user_id"] %></td>
+              <td><%= item.user.name.capitalize %></td>
               <td>
                 <div>
                 <form action="/items" method="GET">
@@ -47,7 +49,6 @@
 
       <div class="well">
         <form action="/lists" method="GET">
-          <input name="name" class="form_control">
           <button class="btn btn-danger">Search Lists</button>
         </form>
       </div>
